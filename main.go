@@ -21,6 +21,7 @@ func main() {
 
 	log.Println("Starting chimes-backend...")
 	r := gin.Default()
+	r.SetTrustedProxies(nil) // Trust no proxies for now, will configure later
 	log.Println("Connecting to database...")
 	// Connect to DB
 	if err := models.ConnectDatabase(); err != nil {
