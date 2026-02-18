@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-hustle-backend
+chimes-backend
 
 # Test binary, built with `go test -c`
 *.test
@@ -31,7 +31,7 @@ service-account-key.json
 
 # Editor/IDE
 # .idea/
-# .vscode/
+.vscode/
 
 .DS_Store
 

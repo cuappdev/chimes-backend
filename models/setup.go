@@ -15,7 +15,7 @@ func ConnectDatabase() error {
     // Build connection string from env variables
     host := getEnv("DB_HOST", "localhost")
     user := getEnv("DB_USER", "postgres")
-    dbname := getEnv("DB_NAME", "hustle")
+    dbname := getEnv("DB_NAME", "chimes")
     port := getEnv("DB_PORT", "5432")
     password := getEnv("DB_PASSWORD", "")
     sslmode := getEnv("DB_SSLMODE", "require")
