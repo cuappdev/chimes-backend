@@ -34,6 +34,11 @@ func (s *ListingService) GetServiceListings(sellerID uint) ([]models.ServiceList
 	return models.GetServiceListingsBySellerID(sellerID)
 }
 
+// GetServiceListingWithServices retrieves a service listing with all its services
+func (s *ListingService) GetServiceListingWithServices(listingID uint) (*models.ServiceListing, error) {
+	return models.GetServiceListingWithServices(listingID)
+}
+
 // UpdateServiceListing updates a service listing with validation
 func (s *ListingService) UpdateServiceListing(id, sellerID uint, description, categories string) (*models.ServiceListing, error) {
 	// Find and verify ownership

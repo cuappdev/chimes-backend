@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/cuappdev/hustle-backend/middleware"
+	"github.com/cuappdev/hustle-backend/models"
 	"github.com/cuappdev/hustle-backend/services"
+	"github.com/gin-gonic/gin"
 )
 
 type ServiceController struct {
