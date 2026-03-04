@@ -37,7 +37,7 @@ func ConnectDatabase() error {
     sqlDB.SetConnMaxLifetime(time.Hour)
 
     // Make sure to include all models to migrate here
-    err = database.AutoMigrate(&User{})
+    err = database.AutoMigrate(&User{}, &Seller{}, &FCMToken{}, &ServiceListing{}, &Service{})
     if err != nil {
         return fmt.Errorf("failed to migrate database: %w", err)
     }

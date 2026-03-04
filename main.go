@@ -69,6 +69,7 @@ func main() {
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
 		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
 		authd.POST("/fcm/test", controllers.SendTestNotification)
+
 	}
 	log.Println("Server starting on :8080")
 
