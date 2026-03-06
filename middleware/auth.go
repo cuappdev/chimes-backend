@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	firebaseauth "firebase.google.com/go/v4/auth"
+	"github.com/cuappdev/chimes-backend/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/cuappdev/hustle-backend/auth"
 )
 
 type ctxKey string
@@ -76,6 +76,8 @@ func RequireFirebaseUser(ac *firebaseauth.Client) gin.HandlerFunc {
 // Helper to read the uid in handlers:
 func UIDFrom(c *gin.Context) string {
 	v := c.Request.Context().Value(UIDKey)
-	if s, ok := v.(string); ok { return s }
+	if s, ok := v.(string); ok {
+		return s
+	}
 	return ""
 }

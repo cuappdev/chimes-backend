@@ -9,4 +9,4 @@ Dockerfile
 docker-compose.yml
 *.md
 .DS_Store
-hustle-backend
+chimes-backend

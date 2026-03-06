@@ -4,12 +4,13 @@ import (
 	"context"
 	"log"
 	"os"
+
+	"github.com/cuappdev/chimes-backend/auth"
+	"github.com/cuappdev/chimes-backend/controllers"
+	"github.com/cuappdev/chimes-backend/middleware"
+	"github.com/cuappdev/chimes-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-  	"github.com/cuappdev/hustle-backend/models"
-  	"github.com/cuappdev/hustle-backend/controllers"
-	"github.com/cuappdev/hustle-backend/auth"
-	"github.com/cuappdev/hustle-backend/middleware"  
 )
 
 func main() {
@@ -18,8 +19,9 @@ func main() {
 		log.Println("Error loading .env file.")
 	}
 
-	log.Println("Starting hustle-backend...")
-  	r := gin.Default()
+	log.Println("Starting chimes-backend...")
+	r := gin.Default()
+	r.SetTrustedProxies(nil) // Trust no proxies for now, will configure later
 	log.Println("Connecting to database...")
 	// Connect to DB
 	if err := models.ConnectDatabase(); err != nil {
@@ -44,12 +46,11 @@ func main() {
 	if err := auth.InitFirebase(serviceAccountPath); err != nil {
 		log.Printf("[FATAL] Firebase Messaging init failed: %v", err)
 	}
-	
 
 	log.Println("Setting up routes...")
 	// Public routes
 	r.GET("/healthcheck", controllers.HealthCheck)
-	
+
 	// Auth routes (public)
 	api := r.Group("/api")
 	{
@@ -66,36 +67,13 @@ func main() {
 		authd.POST("/users", controllers.CreateUser)
 		// Notification routes
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
-        authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
-        authd.POST("/fcm/test", controllers.SendTestNotification)
+		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
+		authd.POST("/fcm/test", controllers.SendTestNotification)
 
-		// Initialize service controller
-		serviceController := controllers.NewServiceController()
-
-		// Service Listing routes
-		serviceListings := authd.Group("/service-listings")
-		{
-			serviceListings.GET("", serviceController.GetServiceListings)
-			serviceListings.POST("", serviceController.CreateServiceListing)
-			serviceListings.GET("/:id", serviceController.GetServiceListing)
-			serviceListings.PATCH("/:id", serviceController.UpdateServiceListing)
-			serviceListings.DELETE("/:id", serviceController.DeleteServiceListing)
-
-			// Nested services routes
-			serviceListings.GET("/:id/services", serviceController.GetServices)
-			serviceListings.POST("/:id/services", serviceController.AddService)
-		}
-
-		// Individual service routes
-		services := authd.Group("/services")
-		{
-			services.PATCH("/:id", serviceController.UpdateService)
-			services.DELETE("/:id", serviceController.DeleteService)
-		}
 	}
 	log.Println("Server starting on :8080")
 
-  	r.Run()
+	r.Run()
 }
 
 func getwdSafe() string {

@@ -1,13 +1,13 @@
 package controllers
 
 import (
-"net/http"
+	"net/http"
 
-"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // GET /healthcheck
 // Get healthcheck
 func HealthCheck(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "Hustle is healthy!"})
+	c.JSON(http.StatusOK, gin.H{"status": "Chimes is healthy!"})
 }

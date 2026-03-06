@@ -2,9 +2,10 @@ package auth
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
-	"log"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -67,7 +68,7 @@ func (j *JWTService) generateAccessToken(userID, email string) (string, error) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "hustle-backend",
+			Issuer:    "chimes-backend",
 			Subject:   userID,
 		},
 	}
@@ -82,7 +83,7 @@ func (j *JWTService) generateRefreshToken(userID string) (string, error) {
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)), // 7 days
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
-		Issuer:    "hustle-backend",
+		Issuer:    "chimes-backend",
 		Subject:   userID,
 	}
 

@@ -5,9 +5,9 @@ import (
 "strings"
 
 "github.com/gin-gonic/gin"
-"github.com/cuappdev/hustle-backend/models"
-"github.com/cuappdev/hustle-backend/middleware"
-	"github.com/cuappdev/hustle-backend/auth"
+"github.com/cuappdev/chimes-backend/models"
+"github.com/cuappdev/chimes-backend/middleware"
+	"github.com/cuappdev/chimes-backend/auth"
 	firebaseauth "firebase.google.com/go/v4/auth"
 )
 

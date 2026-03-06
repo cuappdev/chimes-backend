@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/cuappdev/hustle-backend/models"
-	"github.com/cuappdev/hustle-backend/services"
+	"github.com/cuappdev/chimes-backend/models"
+	"github.com/cuappdev/chimes-backend/services"
 )
 
 // Struct for register token

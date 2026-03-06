@@ -1,4 +1,4 @@
-name: Docker Build & Push and Deploy to dev for hustle-backend
+name: Docker Build & Push and Deploy to dev for chimes-backend
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: cornellappdev/hustle-dev:${{ steps.vars.outputs.sha_short }}
+          tags: cornellappdev/chimes-dev:${{ steps.vars.outputs.sha_short }}
       - name: Remote SSH and Deploy
         uses: appleboy/ssh-action@master
         env:

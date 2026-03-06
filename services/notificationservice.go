@@ -3,8 +3,8 @@ package services
 import (
     "context"
     "firebase.google.com/go/v4/messaging"
-    "github.com/cuappdev/hustle-backend/auth"
-    "github.com/cuappdev/hustle-backend/models"
+    "github.com/cuappdev/chimes-backend/auth"
+    "github.com/cuappdev/chimes-backend/models"
 )
 
 type NotificationPayload struct {

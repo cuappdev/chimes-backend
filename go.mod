@@ -1,4 +1,4 @@
-module github.com/cuappdev/hustle-backend
+module github.com/cuappdev/chimes-backend
 
 go 1.25.1
 
