@@ -49,7 +49,7 @@ func main() {
 
 	log.Println("Setting up routes...")
 	// Public routes
-	r.GET("/healthcheck", controllers.HealthCheck)
+	r.GET("/health", controllers.HealthCheck)
 
 	// Auth routes (public)
 	api := r.Group("/api")
