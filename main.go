@@ -71,7 +71,7 @@ func main() {
 		authd.POST("/fcm/test", controllers.SendTestNotification)
 	}
 	//Admin routes
-	admin := api.Group("")
+	admin := api.Group("/admin")
 	admin.Use(middleware.RequireAuth(ac), middleware.RequireAdmin)
 	{
 		//User routes
