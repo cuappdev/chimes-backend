@@ -7,6 +7,7 @@ import (
 
 	firebaseauth "firebase.google.com/go/v4/auth"
 	"github.com/cuappdev/chimes-backend/auth"
+	"github.com/cuappdev/chimes-backend/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -47,6 +48,26 @@ func RequireAuth(firebaseAuthClient *firebaseauth.Client) gin.HandlerFunc {
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
+}
+
+// RequireAdmin ensures the request is authenticated and the user is an admin.
+// Aborts with 401 if the UID is missing or user not found, and 403 if not admin
+func RequireAdmin(c *gin.Context) {
+	uid := UIDFrom(c)
+	if uid == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing uid"})
+		return
+	}
+	var user models.User
+	if err := models.DB.Where("firebase_uid = ?", uid).First(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		return
+	}
+	if !user.IsAdmin {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "admin access required"})
+		return
+	}
+	c.Next()
 }
 
 // RequireFirebaseUser validates only Firebase tokens (for backward compatibility)
