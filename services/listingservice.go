@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/cuappdev/hustle-backend/models"
+	"github.com/cuappdev/chimes-backend/models"
 )
 
 type ListingService struct {
