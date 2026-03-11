@@ -49,7 +49,7 @@ func main() {
 
 	log.Println("Setting up routes...")
 	// Public routes
-	r.GET("/healthcheck", controllers.HealthCheck)
+	r.GET("/health", controllers.HealthCheck)
 
 	// Auth routes (public)
 	api := r.Group("/api")
@@ -69,6 +69,7 @@ func main() {
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
 		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
 		authd.POST("/fcm/test", controllers.SendTestNotification)
+
 	}
 	//Admin routes
 	admin := api.Group("/admin")
