@@ -1,14 +1,14 @@
 package controllers
 
 import (
-"net/http"
-"strings"
+	"net/http"
+	"strings"
 
-"github.com/gin-gonic/gin"
-"github.com/cuappdev/chimes-backend/models"
-"github.com/cuappdev/chimes-backend/middleware"
-	"github.com/cuappdev/chimes-backend/auth"
 	firebaseauth "firebase.google.com/go/v4/auth"
+	"github.com/cuappdev/chimes-backend/auth"
+	"github.com/cuappdev/chimes-backend/middleware"
+	"github.com/cuappdev/chimes-backend/models"
+	"github.com/gin-gonic/gin"
 )
 
 // GET /users
@@ -23,29 +23,29 @@ func FindUsers(c *gin.Context) {
 // POST /users
 // Create new user
 func CreateUser(c *gin.Context) {
-  // Validate input
-  var input models.CreateUserInput
-  if err := c.ShouldBindJSON(&input); err != nil {
-    c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-    return
-  }
-  
-  uid := middleware.UIDFrom(c)
-  if uid == "" {
-    c.JSON(http.StatusUnauthorized, gin.H{"error": "midding firebase uid"})
-    return
-  }
+	// Validate input
+	var input models.CreateUserInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-  // Create user
-  user := models.User{
-    FirstName: input.FirstName, 
-    LastName: input.LastName, 
-    Email: input.Email,
-    Firebase_UID: uid,
-  }
-  models.DB.Create(&user)
+	uid := middleware.UIDFrom(c)
+	if uid == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing firebase uid"})
+		return
+	}
 
-  c.JSON(http.StatusOK, gin.H{"data": user})
+	// Create user
+	user := models.User{
+		FirstName:    input.FirstName,
+		LastName:     input.LastName,
+		Email:        input.Email,
+		Firebase_UID: uid,
+	}
+	models.DB.Create(&user)
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
 // VerifyTokenRequest represents the request body for token verification
@@ -73,11 +73,11 @@ func VerifyToken(firebaseAuthClient *firebaseauth.Client) gin.HandlerFunc {
 		// Extract user data from Firebase token
 		claims := firebaseToken.Claims
 		firebaseUID := firebaseToken.UID
-		
+
 		// Get user info from Firebase token claims
 		email, _ := claims["email"].(string)
 		name, _ := claims["name"].(string)
-		
+
 		// Parse name into first and last name
 		nameParts := strings.Fields(name)
 		firstName := ""
@@ -116,11 +116,11 @@ func VerifyToken(firebaseAuthClient *firebaseauth.Client) gin.HandlerFunc {
 			"refresh_token": tokenPair.RefreshToken,
 			"expires_in":    tokenPair.ExpiresIn,
 			"user": gin.H{
-				"id":         user.ID,
+				"id":           user.ID,
 				"firebase_uid": user.Firebase_UID,
-				"email":      user.Email,
-				"firstname":  user.FirstName,
-				"lastname":   user.LastName,
+				"email":        user.Email,
+				"firstname":    user.FirstName,
+				"lastname":     user.LastName,
 			},
 		})
 	}
@@ -183,4 +183,3 @@ func RefreshToken() gin.HandlerFunc {
 		})
 	}
 }
-
