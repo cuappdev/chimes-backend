@@ -49,7 +49,6 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}
-	models.DB.Create(&user)
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
