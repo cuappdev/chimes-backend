@@ -43,6 +43,10 @@ func CreateUser(c *gin.Context) {
 		Email:        input.Email,
 		Firebase_UID: uid,
 	}
+	if err := models.DB.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+		return
+	}
 	models.DB.Create(&user)
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
