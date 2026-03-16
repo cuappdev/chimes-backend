@@ -43,6 +43,8 @@ func CreateUser(c *gin.Context) {
 		Email:        input.Email,
 		Firebase_UID: uid,
 	}
+
+	// Reject duplicate users — firebase_uid has a unique constraint in the DB
 	if err := models.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
