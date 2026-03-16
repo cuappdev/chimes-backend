@@ -63,12 +63,19 @@ func main() {
 	authd.Use(middleware.RequireAuth(ac))
 	{
 		// User routes
-		authd.GET("/users", controllers.FindUsers)
 		authd.POST("/users", controllers.CreateUser)
 		// Notification routes
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
 		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
 		authd.POST("/fcm/test", controllers.SendTestNotification)
+	}
+
+	//Admin routes
+	admin := api.Group("/admin")
+	admin.Use(middleware.RequireAuth(ac), middleware.RequireAdmin)
+	{
+		//User routes
+		admin.GET("/users", controllers.FindUsers)
 	}
 	log.Println("Server starting on :8080")
 
