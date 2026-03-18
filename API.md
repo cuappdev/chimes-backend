@@ -5,12 +5,13 @@ Base URL: `http://localhost:8080`
 
 ## Public Routes
 
-### GET /healthcheck
+### GET /health
 Check if the server is running.
 
 **Response**
 ```json
-{ "message": "Chimes is healthy!" }
+{ "status": "healthy", 
+  "database": "connected" }
 ```
 
 ---
@@ -71,9 +72,6 @@ Get a new access token using a refresh token.
 ## Protected Routes
 
 Requires `Authorization: Bearer <access_token>` header.
-
-### POST /api/users
-Create a new user. Firebase UID is extracted from the token.
 
 **Request**
 ```json

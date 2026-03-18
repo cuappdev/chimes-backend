@@ -62,8 +62,6 @@ func main() {
 	authd := api.Group("")
 	authd.Use(middleware.RequireAuth(ac))
 	{
-		// User routes
-		authd.POST("/users", controllers.CreateUser)
 		// Notification routes
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
 		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)

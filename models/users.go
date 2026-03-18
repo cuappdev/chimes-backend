@@ -17,19 +17,11 @@ type User struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
-type CreateUserInput struct {
-	FirstName string `json:"firstname" binding:"required"`
-	LastName  string `json:"lastname" binding:"required"`
-	Email     string `json:"email" binding:"required"`
-}
-
-type Seller struct {
-  ID          uint   `json:"id" gorm:"primary_key"`
-  UserID      uint   `json:"user_id"`
-  Description string `json:"description"`
-  IsActive    bool   `json:"is_active"`
-  CreatedAt   string `json:"created_at"`
-  UpdatedAt   string `json:"updated_at"`
+type UserResponse struct {
+	ID        uint   `json:"id" gorm:"primary_key"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Email     string `json:"email"`
 }
 
 // FindOrCreateUser finds an existing user by Firebase UID or creates a new one
