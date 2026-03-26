@@ -10,6 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type AdminActionRequest struct {
+	Email string `json:"email" binding:"required"`
+}
+
 // GET /users
 // Get all users
 func FindUsers(c *gin.Context) {
@@ -24,9 +28,14 @@ func FindUsers(c *gin.Context) {
 
 // PATCH /users/:id/promote
 func PromoteUserAdmin(c *gin.Context) {
-	id := c.Param("id")
+	var req AdminActionRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing email"})
+		return
+	}
 	var user models.User
-	if err := models.DB.First(&user, id).Error; err != nil {
+	if err := models.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
@@ -40,9 +49,13 @@ func PromoteUserAdmin(c *gin.Context) {
 
 // PATCH /users/:id/demote
 func DemoteUserAdmin(c *gin.Context) {
-	id := c.Param("id")
+	var req AdminActionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing email"})
+		return
+	}
 	var user models.User
-	if err := models.DB.First(&user, id).Error; err != nil {
+	if err := models.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}

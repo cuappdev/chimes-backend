@@ -75,6 +75,8 @@ func main() {
 	{
 		//User routes
 		admin.GET("/users", controllers.FindUsers)
+
+		//Admin routes
 		admin.PATCH("/users/promote", controllers.PromoteUserAdmin)
 		admin.PATCH("/users/demote", controllers.DemoteUserAdmin)
 	}

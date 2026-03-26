@@ -25,6 +25,10 @@ type UserResponse struct {
 	IsAdmin   bool   `json:"is_admin"`
 }
 
+type AdminActionRequest struct {
+	Email string `json:"email" binding:"required"`
+}
+
 func (user *User) ToResponse() UserResponse {
 	return UserResponse{
 		ID:        user.ID,
