@@ -59,6 +59,18 @@ func DemoteUserAdmin(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
+
+	//Prevent demoting last admin
+	var adminCount int64
+	if err := models.DB.Model(&models.User{}).Where("is_admin = ?", true).Limit(2).Count(&adminCount).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to count admins"})
+		return
+	}
+	if adminCount <= 1 && user.IsAdmin {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot demote the last admin"})
+		return
+	}
+
 	//fail to update
 	if err := models.DB.Model(&user).Update("is_admin", false).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to demote user"})
