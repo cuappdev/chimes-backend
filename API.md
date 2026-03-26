@@ -73,31 +73,6 @@ Get a new access token using a refresh token.
 
 Requires `Authorization: Bearer <access_token>` header.
 
-**Request**
-```json
-{
-  "firstname": "Tran",
-  "lastname": "Tran",
-  "email": "user@example.com"
-}
-```
-
-**Response**
-```json
-{
-  "data": {
-    "id": 1,
-    "firebase_uid": "abc123",
-    "firstname": "Tran",
-    "lastname": "Tran",
-    "email": "user@example.com",
-    "is_admin": false,
-    "created_at": "2026-03-10T00:00:00Z",
-    "updated_at": "2026-03-10T00:00:00Z"
-  }
-}
-```
-
 ---
 
 ### POST /api/fcm/register
@@ -144,15 +119,62 @@ Get all users.
   "data": [
     {
       "id": 1,
-      "firebase_uid": "abc123",
       "firstname": "Tran",
       "lastname": "Tran",
       "email": "user@example.com",
-      "is_admin": true,
-      "created_at": "2026-03-10T00:00:00Z",
-      "updated_at": "2026-03-10T00:00:00Z"
+      "is_admin": true
     }
   ]
+}
+```
+
+---
+
+### PATCH /api/admin/users/promote
+Promote a user to admin by email.
+
+**Request**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Response**
+```json
+{
+  "data": {
+    "id": 1,
+    "firstname": "Tran",
+    "lastname": "Tran",
+    "email": "user@example.com",
+    "is_admin": true
+  }
+}
+```
+
+---
+
+### PATCH /api/admin/users/demote
+Demote a user from admin by email.
+
+**Request**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Response**
+```json
+{
+  "data": {
+    "id": 1,
+    "firstname": "Tran",
+    "lastname": "Tran",
+    "email": "user@example.com",
+    "is_admin": false
+  }
 }
 ```
 

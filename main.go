@@ -75,6 +75,10 @@ func main() {
 	{
 		//User routes
 		admin.GET("/users", controllers.FindUsers)
+
+		//Admin routes
+		admin.PATCH("/users/promote", controllers.PromoteUserAdmin)
+		admin.PATCH("/users/demote", controllers.DemoteUserAdmin)
 	}
 	log.Println("Server starting on :8080")
 

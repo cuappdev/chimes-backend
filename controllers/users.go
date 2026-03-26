@@ -10,13 +10,61 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type AdminActionRequest struct {
+	Email string `json:"email" binding:"required"`
+}
+
 // GET /users
 // Get all users
 func FindUsers(c *gin.Context) {
 	var users []models.UserResponse
-	models.DB.Find(&users)
+	if err := models.DB.Model(&models.User{}).Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": users})
+}
+
+// PATCH /users/:id/promote
+func PromoteUserAdmin(c *gin.Context) {
+	var req AdminActionRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing email"})
+		return
+	}
+	var user models.User
+	if err := models.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+	//fail to update
+	if err := models.DB.Model(&user).Update("is_admin", true).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to promote user"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user.ToResponse()})
+}
+
+// PATCH /users/:id/demote
+func DemoteUserAdmin(c *gin.Context) {
+	var req AdminActionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing email"})
+		return
+	}
+	var user models.User
+	if err := models.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+	//fail to update
+	if err := models.DB.Model(&user).Update("is_admin", false).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to demote user"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user.ToResponse()})
 }
 
 // VerifyTokenRequest represents the request body for token verification
