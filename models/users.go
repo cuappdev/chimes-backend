@@ -22,6 +22,17 @@ type UserResponse struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
+	IsAdmin   bool   `json:"is_admin"`
+}
+
+func (user *User) ToResponse() UserResponse {
+	return UserResponse{
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		IsAdmin:   user.IsAdmin,
+	}
 }
 
 // FindOrCreateUser finds an existing user by Firebase UID or creates a new one

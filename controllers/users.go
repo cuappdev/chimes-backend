@@ -22,6 +22,38 @@ func FindUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
+// PATCH /users/:id/promote
+func PromoteUserAdmin(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+	if err := models.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+	//fail to update
+	if err := models.DB.Model(&user).Update("is_admin", true).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to promote user"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user.ToResponse()})
+}
+
+// PATCH /users/:id/demote
+func DemoteUserAdmin(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+	if err := models.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+	//fail to update
+	if err := models.DB.Model(&user).Update("is_admin", false).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to demote user"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": user.ToResponse()})
+}
+
 // VerifyTokenRequest represents the request body for token verification
 type VerifyTokenRequest struct {
 	Token string `json:"token" binding:"required"`
