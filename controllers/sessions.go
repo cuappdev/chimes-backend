@@ -27,9 +27,8 @@ func CreateSession(c *gin.Context) {
 	}
 
 	session := models.Session{
-		Day:        input.Day,
-		TimeOfDay:  input.TimeOfDay,
-		KudosCount: 0,
+		Day:       input.Day,
+		TimeOfDay: input.TimeOfDay,
 	}
 
 	if err := models.DB.Create(&session).Error; err != nil {

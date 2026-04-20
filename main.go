@@ -67,6 +67,9 @@ func main() {
 		authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
 		authd.POST("/fcm/test", controllers.SendTestNotification)
 
+		//Kudos routes
+		authd.POST("/kudos", controllers.CreateKudo)
+
 	}
 
 	//Admin routes
@@ -79,6 +82,9 @@ func main() {
 		//Admin routes
 		admin.PATCH("/users/promote", controllers.PromoteUserAdmin)
 		admin.PATCH("/users/demote", controllers.DemoteUserAdmin)
+
+		//Kudo routes
+		admin.GET("/kudos", controllers.GetSessionKudos)
 	}
 	log.Println("Server starting on :8080")
 
