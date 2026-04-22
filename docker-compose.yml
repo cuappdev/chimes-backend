@@ -16,7 +16,7 @@ services:
 
   app:
     build: .
-    image: cornellappdev/chimes-dev:${IMAGE_TAG:-latest}
+    image: cornellappdev/chimes-dev:${IMAGE_TAG:?IMAGE_TAG is required}
     env_file: .env
     environment:
       DB_HOST: ${DB_HOST:-db}
