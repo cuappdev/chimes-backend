@@ -16,18 +16,18 @@ services:
 
   app:
     build: .
-    image: cornellappdev/chimes-dev:${IMAGE_TAG}
+    image: cornellappdev/chimes-dev:${IMAGE_TAG:?IMAGE_TAG is required}
     env_file: .env
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     volumes:
       - ./service-account-key.json:/service-account-key.json
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     restart: unless-stopped
 
 volumes:
