@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm/clause"
+)
 
 type TimeOfDay string
 
@@ -12,8 +16,8 @@ const (
 
 type Session struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
-	Day       time.Time `json:"date" binding:"required"`
-	TimeOfDay TimeOfDay `json:"time_of_day" binding:"required"`
+	Day       time.Time `json:"date" binding:"required" gorm:"uniqueIndex:idx_session_unique"`
+	TimeOfDay TimeOfDay `json:"time_of_day" binding:"required" gorm:"uniqueIndex:idx_session_unique"`
 }
 
 type SessionInput struct {
@@ -28,16 +32,18 @@ type SessionSong struct {
 }
 
 func GetOrCreateSession(day time.Time, timeOfDay TimeOfDay) (*Session, error) {
-	var session Session
-	result := DB.Where("day = ? AND time_of_day = ?", day, timeOfDay).First(&session)
-	if result.Error == nil {
-		return &session, nil
-	}
-	session = Session{Day: day, TimeOfDay: timeOfDay}
-	if err := DB.Create(&session).Error; err != nil {
+	session := Session{Day: day, TimeOfDay: timeOfDay}
+	if err := DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "day"}, {Name: "time_of_day"}},
+		DoNothing: true,
+	}).Create(&session).Error; err != nil {
 		return nil, err
 	}
-	return &session, nil
+	var result Session
+	if err := DB.Where("day = ? AND time_of_day = ?", day, timeOfDay).First(&result).Error; err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 func CreateDailySessions(day time.Time) error {
