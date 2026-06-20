@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/xml"
 	"io"
 	"log"
@@ -17,11 +18,23 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	resp, err := http.Get("https://apps.chimes.cornell.edu/music/rss.xml")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", "https://apps.chimes.cornell.edu/music/rss.xml", nil)
+	if err != nil {
+		log.Fatalf("Failed to create request: %v", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatalf("Failed to fetch RSS: %v", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("RSS feed returned status %d", resp.StatusCode)
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
