@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() error {
+	godotenv.Load()
 	// Build connection string from env variables
 	host := getEnv("DB_HOST", "localhost")
 	user := getEnv("DB_USER", "postgres")
@@ -37,8 +39,7 @@ func ConnectDatabase() error {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	// Make sure to include all models to migrate here
-	err = database.AutoMigrate(&User{}, &FCMToken{})
+	err = database.AutoMigrate(&User{}, &FCMToken{}, &Session{}, &Song{}, &SessionSong{}, &Kudo{}, &KudoType{})
 	if err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}

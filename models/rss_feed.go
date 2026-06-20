@@ -1,10 +1,6 @@
-package main
+package models
 
 import (
-	"encoding/xml"
-	"fmt"
-	"io"
-	"net/http"
 	"regexp"
 	"strings"
 )
@@ -23,7 +19,7 @@ type Item struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-type Song struct {
+type ParsedSong struct {
 	Title  string
 	Source string
 	Artist string
@@ -31,12 +27,7 @@ type Song struct {
 
 type TimeSlot struct {
 	Time  string
-	Songs []Song
-}
-
-type ConcertDay struct {
-	Title     string
-	TimeSlots []TimeSlot
+	Songs []ParsedSong
 }
 
 // matches HTML tag
@@ -49,8 +40,8 @@ func stripTags(s string) string {
 
 var originPattern = regexp.MustCompile(`\(from "([^"]+)"\)`)
 
-func parseSong(line string) Song {
-	song := Song{}
+func parseSong(line string) ParsedSong {
+	song := ParsedSong{}
 
 	title, artist, found := strings.Cut(line, " / ")
 	if found {
@@ -65,11 +56,10 @@ func parseSong(line string) Song {
 	}
 	song.Title = title
 	return song
-
 }
 
-// converts HTML into TimeSlot structure
-func parseDescription(desc string) []TimeSlot {
+// ParseDescription converts HTML into TimeSlot structure
+func ParseDescription(desc string) []TimeSlot {
 	var slots []TimeSlot
 	var current *TimeSlot
 
@@ -99,41 +89,4 @@ func parseDescription(desc string) []TimeSlot {
 		}
 	}
 	return slots
-}
-
-func main() {
-	resp, err := http.Get("https://apps.chimes.cornell.edu/music/rss.xml")
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	var rss RSS
-	if err := xml.Unmarshal(data, &rss); err != nil {
-		panic(err)
-	}
-
-	var allConcerts []ConcertDay
-	for _, item := range rss.Channel.Items {
-		cleanHTML := strings.NewReplacer("&lt;", "<", "&gt;", ">", "&amp;", "&").Replace(item.Description)
-		day := ConcertDay{
-			Title:     item.Title,
-			TimeSlots: parseDescription(cleanHTML),
-		}
-		allConcerts = append(allConcerts, day)
-	}
-
-	for _, day := range allConcerts {
-		fmt.Println("=====", day.Title, "=====")
-		for _, slot := range day.TimeSlots {
-			fmt.Println(slot.Time)
-			for _, song := range slot.Songs {
-				fmt.Printf("%q by %q from %q\n", song.Title, song.Artist, song.Source)
-			}
-		}
-	}
 }
