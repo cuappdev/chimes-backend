@@ -78,5 +78,6 @@ func main() {
 // parseConcertDate parses an RSS item title like "Friday, June 20, 2026" into a time.Time
 func parseConcertDate(title string) (time.Time, error) {
 	const dateFormat = "Monday, January 2, 2006"
-	return time.Parse(dateFormat, title)
+	loc, _ := time.LoadLocation("America/New_York")
+	return time.ParseInLocation(dateFormat, title, loc)
 }
