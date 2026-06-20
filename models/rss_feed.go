@@ -33,6 +33,9 @@ type TimeSlot struct {
 // matches HTML tag
 var tagPattern = regexp.MustCompile(`<[^>]+>`)
 
+// matches all <br> variants: <br>, <br/>, <br />, <BR>, etc.
+var brPattern = regexp.MustCompile(`(?i)<br\s*/?>\s*`)
+
 // removes all HTML tags from a string
 func stripTags(s string) string {
 	return strings.TrimSpace(tagPattern.ReplaceAllString(s, ""))
@@ -64,8 +67,8 @@ func ParseDescription(desc string) []TimeSlot {
 	var current *TimeSlot
 
 	var lines []string
-	for _, current := range strings.Split(desc, "<br>") {
-		for _, line := range strings.Split(current, "\n") {
+	for _, chunk := range brPattern.Split(desc, -1) {
+		for _, line := range strings.Split(chunk, "\n") {
 			lines = append(lines, line)
 		}
 	}
