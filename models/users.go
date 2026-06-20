@@ -1,8 +1,11 @@
 package models
 
 import (
+	"errors"
 	"log"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -43,25 +46,31 @@ func (user *User) ToResponse() UserResponse {
 func FindOrCreateUser(firebaseUID, email, firstName, lastName string) (*User, error) {
 	var user User
 
-	// Try to find existing user
 	result := DB.Where("firebase_uid = ?", firebaseUID).First(&user)
-
 	if result.Error != nil {
-		log.Printf("[ERROR] User not found by Firebase UID (%s): %v", firebaseUID, result.Error)
-		// User doesn't exist, create new one
+		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, result.Error
+		}
 		user = User{
 			Firebase_UID: firebaseUID,
 			Email:        email,
 			FirstName:    firstName,
 			LastName:     lastName,
 		}
-
 		if err := DB.Create(&user).Error; err != nil {
 			log.Printf("[ERROR] Failed to create user (Firebase UID: %s): %v", firebaseUID, err)
 			return nil, err
 		}
 	}
 
+	return &user, nil
+}
+
+func GetUserByFirebaseUID(firebaseUID string) (*User, error) {
+	var user User
+	if err := DB.Where("firebase_uid = ?", firebaseUID).First(&user).Error; err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
