@@ -25,7 +25,7 @@ func main() {
 	log.Println("Connecting to database...")
 	// Connect to DB
 	if err := models.ConnectDatabase(); err != nil {
-		log.Printf("[FATAL] Database connection failed: %v", err)
+		log.Fatalf("[FATAL] Database connection failed: %v", err)
 	}
 
 	// Migrate fcm token table
@@ -35,16 +35,16 @@ func main() {
 	serviceAccountPath := "service-account-key.json"
 	// Log working dir and check file exists
 	if _, err := os.Stat(serviceAccountPath); err != nil {
-		log.Printf("[FATAL] Missing service account file: %s (cwd: %s): %v", serviceAccountPath, getwdSafe(), err)
+		log.Fatalf("[FATAL] Missing service account file: %s (cwd: %s): %v", serviceAccountPath, getwdSafe(), err)
 	}
 	ac, err := auth.NewAuthClient(context.Background(), serviceAccountPath)
 	if err != nil {
-		log.Printf("[FATAL] Firebase init failed: %v", err)
+		log.Fatalf("[FATAL] Firebase init failed: %v", err)
 	}
 
 	// Initialize Firebase Messaging
 	if err := auth.InitFirebase(serviceAccountPath); err != nil {
-		log.Printf("[FATAL] Firebase Messaging init failed: %v", err)
+		log.Fatalf("[FATAL] Firebase Messaging init failed: %v", err)
 	}
 
 	log.Println("Setting up routes...")

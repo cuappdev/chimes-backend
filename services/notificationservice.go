@@ -31,7 +31,10 @@ func SendToUser(userID uint, payload NotificationPayload) error {
     
     client := auth.GetMessagingClient()
     response, err := client.SendMulticast(context.Background(), message)
-    
+    if err != nil {
+        return err
+    }
+
     // Remove invalid tokens
     if response.FailureCount > 0 {
         for idx, resp := range response.Responses {
@@ -40,8 +43,8 @@ func SendToUser(userID uint, payload NotificationPayload) error {
             }
         }
     }
-    
-    return err
+
+    return nil
 }
 
 // sends to a specific token

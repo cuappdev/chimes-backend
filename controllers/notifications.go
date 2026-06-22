@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"net/http"
-	"github.com/gin-gonic/gin"
+
+	"github.com/cuappdev/chimes-backend/middleware"
 	"github.com/cuappdev/chimes-backend/models"
 	"github.com/cuappdev/chimes-backend/services"
+	"github.com/gin-gonic/gin"
 )
 
 // Struct for register token
@@ -21,16 +23,18 @@ func RegisterFCMToken(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
-    
-    // Get user ID from auth middleware
-    userID := c.GetUint("userID")
-    
-    err := models.SaveOrUpdateToken(userID, input.Token, input.Platform)
+
+    user, err := models.GetUserByFirebaseUID(middleware.UIDFrom(c))
     if err != nil {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+        return
+    }
+
+    if err := models.SaveOrUpdateToken(user.ID, input.Token, input.Platform); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register token"})
         return
     }
-    
+
     c.JSON(http.StatusOK, gin.H{"message": "Token registered successfully"})
 }
 
@@ -58,20 +62,23 @@ func DeleteFCMToken(c *gin.Context) {
 // POST /fcm/test
 // Send a test notification to the user
 func SendTestNotification(c *gin.Context) {
-    userID := c.GetUint("userID")
-    
+    user, err := models.GetUserByFirebaseUID(middleware.UIDFrom(c))
+    if err != nil {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+        return
+    }
+
     payload := services.NotificationPayload{
         Title: "Test Notification",
         Body:  "This is a test notification",
         Data:  map[string]string{"type": "test"},
     }
-    
-    err := services.SendToUser(userID, payload)
-    if err != nil {
+
+    if err := services.SendToUser(user.ID, payload); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-    
+
     c.JSON(http.StatusOK, gin.H{"message": "Notification sent"})
 }
 
